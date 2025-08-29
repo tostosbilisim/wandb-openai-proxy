@@ -66,6 +66,16 @@ deno task start
 deno run --allow-net --allow-env main.ts
 ```
 
+### 方法三：Docker 部署
+
+```bash
+# 1. 构建 Docker 镜像
+docker build -t wandb-proxy .
+
+# 2. 运行 Docker 容器
+docker run -d -p 8000:8000 --name wandb-proxy-container -e WANDB_API_KEY="your_wandb_api_key_here" wandb-proxy
+```
+
 #### 运行测试
 ```bash
 # 运行所有测试
@@ -397,6 +407,16 @@ deno task start
 
 # Or run directly
 deno run --allow-net --allow-env main.ts
+```
+
+### Option 3: Docker Deployment
+
+```bash
+# 1. Build the Docker image
+docker build -t wandb-proxy .
+
+# 2. Run the Docker container
+docker run -d -p 8000:8000 --name wandb-proxy-container -e WANDB_API_KEY="your_wandb_api_key_here" wandb-proxy
 ```
 
 #### Run Tests
