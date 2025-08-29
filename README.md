@@ -212,7 +212,7 @@ curl https://your-domain.deno.dev/v1/chat/completions \
 
 | 变量名 | 必需 | 默认值 | 说明 |
 |--------|------|--------|------|
-| `WANDB_API_KEY` | ❌ | - | Wandb API密钥，用于内部认证和代理服务 |
+| `WANDB_API_KEY` | ✅ | - | Wandb API密钥，用于向Wandb API发送请求（必需） |
 | `APIKEYS` | ❌ | - | 外部API密钥列表，用逗号分隔 (如: key1,key2,key3)，用于外部客户端认证 |
 | `PORT` | ❌ | 8000 | 本地开发服务器端口 |
 
@@ -560,7 +560,7 @@ curl https://your-domain.deno.dev/v1/chat/completions \
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `WANDB_API_KEY` | ❌ | - | Wandb API key for internal proxy authentication |
+| `WANDB_API_KEY` | ✅ | - | Wandb API key for making requests to Wandb API (required) |
 | `APIKEYS` | ❌ | - | Comma-separated list of external API keys (e.g., key1,key2,key3) for client authentication |
 | `PORT` | ❌ | 8000 | Local development server port |
 
