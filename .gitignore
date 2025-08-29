@@ -1,9 +1,11 @@
 # Cluade dev tools
 .claude/
+CLAUDE.md
 
 # Debug files
 *.log
 *.sh
+*.txt
 
 # IDE files
 .vscode/
