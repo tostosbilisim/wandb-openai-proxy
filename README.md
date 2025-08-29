@@ -9,7 +9,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![Deploy](https://img.shields.io/badge/deploy%20to-deno-brightgreen.svg?logo=deno)](https://dash.deno.com/new?url=https://github.com/gloryhry/wandb-openai-proxy)
 
-[![Deploy to Deno Deploy](https://button.deno.dev/deploy.svg)](https://dash.deno.com/new?url=https://github.com/gloryhry/wandb-openai-proxy)
+[![Deploy on Deno](https://deno.com/button)](https://app.deno.com/new?clone=https://github.com/gloryhry/wandb-openai-proxy)
 
 </div>
 
@@ -36,7 +36,7 @@
 
 ### 方法一：一键部署到 Deno Deploy (推荐)
 
-[![Deploy to Deno Deploy](https://button.deno.dev/deploy.svg)](https://dash.deno.com/new?url=https://github.com/gloryhry/wandb-openai-proxy)
+[![Deploy on Deno](https://deno.com/button)](https://app.deno.com/new?clone=https://github.com/gloryhry/wandb-openai-proxy)
 
 点击上方按钮，立即部署您的专属代理服务！
 
@@ -246,8 +246,8 @@ wandb-openai-proxy/
    - 将项目 Fork 到你的 GitHub 账户
 
 2. **一键部署**
-   - 点击下方按钮直接部署你的 Fork：
-   [![Deploy to Deno Deploy](https://button.deno.dev/deploy.svg)](https://dash.deno.com/new?url=https://github.com/gloryhry/wandb-openai-proxy)
+   - 点击下方按钮直接部署：
+   [![Deploy on Deno](https://deno.com/button)](https://app.deno.com/new?clone=https://github.com/gloryhry/wandb-openai-proxy)
 
 3. **配置环境变量**
    - 部署后在 Deno Deploy 控制台设置：
@@ -369,7 +369,7 @@ deno task fmt
 
 ### Option 1: One-Click Deploy to Deno Deploy (Recommended)
 
-[![Deploy to Deno Deploy](https://button.deno.dev/deploy.svg)](https://dash.deno.com/new?url=https://github.com/gloryhry/wandb-openai-proxy)
+[![Deploy on Deno](https://deno.com/button)](https://app.deno.com/new?clone=https://github.com/gloryhry/wandb-openai-proxy)
 
 Click the button above to instantly deploy your own proxy service!
 
