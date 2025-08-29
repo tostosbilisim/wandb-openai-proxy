@@ -3,6 +3,7 @@ import { handleModelsRequest, handleChatCompletionsRequest } from "./src/handler
 import {
   addCorsHeaders,
   validateAuth,
+  validateAdvancedAuth,
   methodNotAllowed,
   notFound,
   internalError,
@@ -11,6 +12,27 @@ import {
 
 const PORT = Deno.env.get("PORT") || 8000;
 const WANDB_API_KEY = Deno.env.get("WANDB_API_KEY");
+
+/**
+ * Hangi API key'in kullanılacağını belirler
+ * @param authHeader İstemciden gelen auth header
+ * @param useInternalKey Internal key kullanılıp kullanılmayacağı
+ * @returns Kullanılacak API key
+ */
+function selectApiKey(authHeader: string | null, useInternalKey: boolean): string {
+  if (useInternalKey) {
+    // Internal kullanım için WANDB_API_KEY kullan
+    return WANDB_API_KEY || "";
+  }
+
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    // Client'tan gelen key'i kullan
+    return authHeader.slice(7);
+  }
+
+  // Fallback olarak WANDB_API_KEY
+  return WANDB_API_KEY || "";
+}
 
 export async function handler(request: Request): Promise<Response> {
   try {
@@ -29,31 +51,59 @@ export async function handler(request: Request): Promise<Response> {
 
     // 验证授权
     let authHeader = request.headers.get("Authorization");
-    
-    // 如果环境变量设置了WANDB_API_KEY，则使用它
-    if (!authHeader && WANDB_API_KEY) {
-      authHeader = `Bearer ${WANDB_API_KEY}`;
+    let useInternalKey = false;
+
+    // Gelişmiş authentication kontrolü
+    const validatedToken = validateAdvancedAuth(authHeader);
+
+    if (!validatedToken) {
+      // Eğer APIKEYS değişkeni varsa ve token geçersizse hata döndür
+      const apiKeys = Deno.env.get("APIKEYS");
+      if (apiKeys) {
+        return addCorsHeaders(
+          new Response(JSON.stringify({
+            error: {
+              message: "Invalid API key. Please provide a valid key from APIKEYS.",
+              type: "invalid_request_error"
+            }
+          }), {
+            status: 401,
+            headers: { "Content-Type": "application/json" }
+          })
+        );
+      }
+
+      // APIKEYS yoksa ve auth header yoksa, internal WANDB_API_KEY kullan
+      if (!authHeader && WANDB_API_KEY) {
+        authHeader = `Bearer ${WANDB_API_KEY}`;
+        useInternalKey = true;
+      } else {
+        return addCorsHeaders(
+          new Response(JSON.stringify({
+            error: {
+              message: "Missing or invalid Authorization header. Use Bearer token.",
+              type: "invalid_request_error"
+            }
+          }), {
+            status: 401,
+            headers: { "Content-Type": "application/json" }
+          })
+        );
+      }
+    } else {
+      // Geçerli token varsa kullan
+      authHeader = `Bearer ${validatedToken}`;
     }
-    
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return addCorsHeaders(
-        new Response(JSON.stringify({
-          error: {
-            message: "Missing or invalid Authorization header. Use Bearer token.",
-            type: "invalid_request_error"
-          }
-        }), {
-          status: 401,
-          headers: { "Content-Type": "application/json" }
-        })
-      );
-    }
+
+    // API key seçimini yap
+    const selectedApiKey = selectApiKey(authHeader, useInternalKey);
+    const wandbAuthHeader = `Bearer ${selectedApiKey}`;
 
     // 路由分发
     if (pathname === "/v1/models" && request.method === "GET") {
-      return handleModelsRequest(authHeader, request).then(addCorsHeaders);
+      return handleModelsRequest(wandbAuthHeader, request).then(addCorsHeaders);
     } else if (pathname === "/v1/chat/completions" && request.method === "POST") {
-      return handleChatCompletionsRequest(authHeader, request).then(addCorsHeaders);
+      return handleChatCompletionsRequest(wandbAuthHeader, request).then(addCorsHeaders);
     } else {
       return addCorsHeaders(notFound());
     }

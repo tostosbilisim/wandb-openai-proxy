@@ -212,21 +212,26 @@ curl https://your-domain.deno.dev/v1/chat/completions \
 
 | 变量名 | 必需 | 默认值 | 说明 |
 |--------|------|--------|------|
-| `WANDB_API_KEY` | ✅ | - | Wandb API密钥，用于认证 |
+| `WANDB_API_KEY` | ❌ | - | Wandb API密钥，用于内部认证和代理服务 |
+| `APIKEYS` | ❌ | - | 外部API密钥列表，用逗号分隔 (如: key1,key2,key3)，用于外部客户端认证 |
 | `PORT` | ❌ | 8000 | 本地开发服务器端口 |
 
 ### 认证方式
 
-支持两种认证方式：
+支持三种认证方式：
 
-1. **请求头认证**（推荐）：
+1. **外部API密钥认证**（推荐用于生产环境）：
+   - 设置 `APIKEYS` 环境变量：`key1,key2,key3`
+   - 请求时使用：`Authorization: Bearer key1`
+
+2. **请求头认证**：
    ```
    Authorization: Bearer your_wandb_api_key
    ```
 
-2. **环境变量认证**：
-   - 在部署时设置 `WANDB_API_KEY` 环境变量
-   - 请求时可省略 Authorization 头
+3. **环境变量认证**（仅内部使用）：
+   - 设置 `WANDB_API_KEY` 环境变量
+   - 请求时可省略 Authorization 头（内部代理使用）
 
 ## 🏗️ 项目结构
 
@@ -555,19 +560,24 @@ curl https://your-domain.deno.dev/v1/chat/completions \
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `WANDB_API_KEY` | ✅ | - | Your Wandb API key for authentication |
+| `WANDB_API_KEY` | ❌ | - | Wandb API key for internal proxy authentication |
+| `APIKEYS` | ❌ | - | Comma-separated list of external API keys (e.g., key1,key2,key3) for client authentication |
 | `PORT` | ❌ | 8000 | Local development server port |
 
 ### Authentication Methods
 
-1. **Request Header (Recommended)**:
+1. **External API Keys (Recommended for production)**:
+   - Set `APIKEYS` environment variable: `key1,key2,key3`
+   - Use in requests: `Authorization: Bearer key1`
+
+2. **Request Header**:
    ```
    Authorization: Bearer your_wandb_api_key
    ```
 
-2. **Environment Variable**:
+3. **Environment Variable (Internal use only)**:
    - Set `WANDB_API_KEY` in deployment environment variables
-   - Omit Authorization header in requests
+   - Omit Authorization header in requests (used by internal proxy)
 
 ## 🏗️ Project Structure
 

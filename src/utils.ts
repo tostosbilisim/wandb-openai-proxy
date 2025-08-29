@@ -22,12 +22,39 @@ export function validateAuth(authHeader: string | null): string | null {
   if (!authHeader) {
     return null;
   }
-  
+
   if (!authHeader.startsWith("Bearer ")) {
     return null;
   }
-  
+
   const token = authHeader.slice(7);
+  return token;
+}
+
+/**
+ * Gelişmiş authentication kontrolü
+ * WANDB_API_KEY veya APIKEYS değişkenlerinden gelen key'leri kontrol eder
+ * @param authHeader Authorization header
+ * @returns Geçerli ise token, değilse null
+ */
+export function validateAdvancedAuth(authHeader: string | null): string | null {
+  if (!authHeader) {
+    return null;
+  }
+
+  if (!authHeader.startsWith("Bearer ")) {
+    return null;
+  }
+
+  const token = authHeader.slice(7);
+
+  // Eğer APIKEYS değişkeni varsa, buradan kontrol et
+  const allowedApiKeys = parseApiKeys();
+  if (allowedApiKeys.length > 0) {
+    return allowedApiKeys.includes(token) ? token : null;
+  }
+
+  // APIKEYS yoksa, gelen token'ı doğrudan döndür (WANDB_API_KEY ile kullanılacak)
   return token;
 }
 
@@ -66,4 +93,29 @@ export function internalError(error: unknown): Response {
       }
     }
   );
+}
+
+/**
+ * APIKEYS environment variable'ından API key'lerini parse eder
+ * Virgüllerle ayrılmış key'leri döndürür
+ */
+export function parseApiKeys(): string[] {
+  const apiKeysEnv = Deno.env.get("APIKEYS");
+  if (!apiKeysEnv) {
+    return [];
+  }
+
+  return apiKeysEnv.split(',')
+    .map(key => key.trim())
+    .filter(key => key.length > 0);
+}
+
+/**
+ * Verilen API key'in geçerli olup olmadığını kontrol eder
+ * @param apiKey Kontrol edilecek API key
+ * @returns Geçerli ise true, değilse false
+ */
+export function isValidApiKey(apiKey: string): boolean {
+  const allowedKeys = parseApiKeys();
+  return allowedKeys.includes(apiKey);
 }
